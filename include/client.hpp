@@ -3,8 +3,8 @@
 
 struct Client
 {
-    int accountNumber; 
-    int balance; 
+    int accountNumber;
+    int balance;
 };
 
-#endif 
+#endif
