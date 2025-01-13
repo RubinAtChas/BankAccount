@@ -6,7 +6,7 @@ This repository contains the implementation of a multithreaded banking system si
 
 ---
 
-## Software Requirements Specification (SRS)
+## SRS
 
 ### **1. Introduction**
 
