@@ -72,7 +72,7 @@ This project defines the requirements for a multithreaded banking system. The sy
 
 ### **1. BankAccount Class**
 #### Task 1: Create the BankAccount Class
-- [x] Define attributes `balance` and `accountNumber`.
+- [ ] Define attributes `balance` and `accountNumber`.
 - [ ] Implement methods `deposit(int amount)`, `withdraw(int amount)`, and `getBalance()`.
 
 ### **2. Bank Class**
