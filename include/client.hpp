@@ -12,7 +12,8 @@ class Client
     public:
     Client();       
     Client(int clientId, Bank bank);
-    
+
+    //void simulate(); 
 };
 
 #endif
