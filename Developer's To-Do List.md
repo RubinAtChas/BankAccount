@@ -52,3 +52,4 @@ Customer 3: Checked balance of Account 123: 250
 Final Balance for Account 123: 500
 Final Balance for Account 456: 100
 ```
+![image](https://github.com/user-attachments/assets/7ec36ab6-46df-4748-8c6f-1c506ea611c1)
