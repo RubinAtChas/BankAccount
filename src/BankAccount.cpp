@@ -1,4 +1,4 @@
-#include "BankAccount\src\BankAccount.hpp"
+#include "../include/BankAccount.hpp"
 
 BankAccount::BankAccount() : balance(0.0), accountNumber(0) {}
 BankAccount::BankAccount(int accountNumber, double balance) : accountNumber(accountNumber), balance(balance) {}
