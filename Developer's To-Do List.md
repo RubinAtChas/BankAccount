@@ -2,13 +2,13 @@
 
 ### **1. BankAccount Class**
 #### Task 1: Create the BankAccount Class
-- [ ] Define attributes `balance` and `accountNumber`.
-- [ ] Implement methods `deposit(int amount)`, `withdraw(int amount)`, and `getBalance()`.
+- [x] Define attributes `balance` and `accountNumber`.
+- [x] Implement methods `deposit(int amount)`, `withdraw(int amount)`, and `getBalance()`.
 
 ### **2. Bank Class**
 #### Task 1: Manage Multiple Accounts
-- [ ] Use `std::map<int, BankAccount>` to store accounts.
-- [ ] Implement methods to add and retrieve account details.
+- [x] Use `std::map<int, BankAccount>` to store accounts.
+- [x] Implement methods to add and retrieve account details.
 
 ### **3. Customer Simulation**
 #### Task 1: Create a Client Function
