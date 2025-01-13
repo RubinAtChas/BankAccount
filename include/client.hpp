@@ -1,10 +1,18 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
-struct Client
+#include "Bank.hpp"
+//#include "bankAccount.hpp"
+class Client
 {
-    int accountNumber;
-    int balance;
+   private:
+    int clientId;
+    Bank bank;  
+
+    public:
+    Client();       
+    Client(int clientId, Bank bank);
+    
 };
 
 #endif
