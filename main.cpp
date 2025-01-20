@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 #include "include/Bank.hpp"
+#include "src/RandomHandler.cpp"
 
 int main()
 {
