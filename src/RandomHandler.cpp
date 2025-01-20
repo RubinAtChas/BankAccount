@@ -1,5 +1,6 @@
 #include <iostream>
 #include <random>
+#include <thread>
 #include "../include/RandomHandler.hpp"
 
 std::random_device rd;
@@ -28,29 +29,30 @@ int getRandomAccount()
 
 void clientSimulation(Bank &bank, int clientId)
 {
-    int accountNumber = getRandomClient();
+    int accountNumber = getRandomAccount();
     int amount = getRandomAmount();
-    int account = getRandomAccount();
-
-    std::shared_ptr<BankAccount> clientAccount = bank.getAccount(accountNumber);
-
-    if (clientAccount)
+    std::shared_ptr<BankAccount> account = bank.getAccount(accountNumber);
+    if (account == nullptr)
     {
-        std::lock_guard<std::mutex> lock(clientAccount->accountMutex);
-
-        if (account >= 1)
-        {
-            clientAccount->deposit(amount);
-            std::cout << "Client " << clientId << " deposited $" << amount << " into account " << accountNumber << std::endl;
-        }
-        else
-        {
-            clientAccount->withdraw(amount);
-            std::cout << "Client " << clientId << " withdrew $" << amount << " from account " << accountNumber << std::endl;
-        }
+        std::cout << "Account not found" << std::endl;
+        return;
     }
-    else
+
+    while (true)
     {
-        std::cout << "Client " << clientId << " could not access account " << accountNumber << std::endl;
+        while (true)
+        {
+            account->deposit(amount);
+            std::cout << "Client " << clientId << " deposited " << amount << " to account " << accountNumber << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+        }
+        while (true)
+        {
+            account->withdraw(amount);
+            std::cout << "Client " << clientId << " withdrew " << amount << " from account " << accountNumber << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(20000));
+        }
+
+        std::cout << account->getBalance() << std::endl;
     }
 }
