@@ -1,56 +1,16 @@
-#include <iostream>
-#include <random>
+#ifndef RANDOMHANDLER_HPP
+#define RANDOMHANDLER_HPP
+
 #include "../include/Bank.hpp"
+#include <iostream>
+#include <memory>
+#include <mutex>
+#include <random>
 
-std::random_device rd;
-std::mt19937 gen(rd());
+int getRandomNumber(int min, int max);
+int getRandomClient();
+int getRandomAmount();
+int getRandomAccount();
+void clientSimulation(Bank &bank, int clientId);
 
-int getRandomNumber(int min, int max)
-{
-    std::uniform_real_distribution<> dis(min, max);
-    return dis(gen);
-}
-
-int getRandomClient()
-{
-    return getRandomNumber(1.0, 10.0);
-}
-
-int getRandomAmount()
-{
-    return getRandomNumber(1.0, 100000.0);
-}
-
-int getRandomAccount()
-{
-    return getRandomNumber(1.0, 5.0);
-}
-
-void clientSimulation(Bank &bank, int clientId)
-{
-    int accountNumber = getRandomClient();
-    int amount = getRandomAmount();
-    int account = getRandomAccount();
-
-    std::shared_ptr<BankAccount> clientAccount = bank.getAccount(accountNumber);
-
-    if (clientAccount)
-    {
-        std::lock_guard<std::mutex> lock(clientAccount->accountMutex);
-
-        if (account == 1)
-        {
-            clientAccount->deposit(amount);
-            std::cout << "Client " << clientId << " deposited $" << amount << " into account " << accountNumber << std::endl;
-        }
-        else
-        {
-            clientAccount->withdraw(amount);
-            std::cout << "Client " << clientId << " withdrew $" << amount << " from account " << accountNumber << std::endl;
-        }
-    }
-    else
-    {
-        std::cout << "Client " << clientId << " could not access account " << accountNumber << std::endl;
-    }
-}
+#endif

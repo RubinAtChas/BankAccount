@@ -1,6 +1,6 @@
 #include <iostream>
 #include <random>
-#include "../include/Bank.hpp"
+#include "../include/RandomHandler.hpp"
 
 std::random_device rd;
 std::mt19937 gen(rd());
@@ -13,17 +13,17 @@ int getRandomNumber(int min, int max)
 
 int getRandomClient()
 {
-    return getRandomNumber(1.0, 10.0);
+    return getRandomNumber(1000, 1010);
 }
 
 int getRandomAmount()
 {
-    return getRandomNumber(1.0, 100000.0);
+    return getRandomNumber(1000, 10000);
 }
 
 int getRandomAccount()
 {
-    return getRandomNumber(1.0, 5.0);
+    return getRandomNumber(1000, 1005);
 }
 
 void clientSimulation(Bank &bank, int clientId)
@@ -38,7 +38,7 @@ void clientSimulation(Bank &bank, int clientId)
     {
         std::lock_guard<std::mutex> lock(clientAccount->accountMutex);
 
-        if (account == 1)
+        if (account >= 1)
         {
             clientAccount->deposit(amount);
             std::cout << "Client " << clientId << " deposited $" << amount << " into account " << accountNumber << std::endl;
