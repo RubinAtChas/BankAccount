@@ -15,10 +15,12 @@ public:
     float getBalance() const;
     int getAccountNumber() const;
     mutable std::mutex accountMutex;
+    
 
 private:
     float balance;
     int accountNumber;
+
 };
 
 #endif // BANKACCOUNT_HPP
