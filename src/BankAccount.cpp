@@ -12,7 +12,6 @@ void BankAccount::deposit(float amount)
     {
         balance += amount;
     }
-    // std::this_thread::sleep_for(std::chrono::milliseconds(10000)); // sleep after the changes in balance, after if statment to avoid race conditions if another methods dont have lock_guard
 }
 
 void BankAccount::withdraw(float amount)
@@ -22,7 +21,6 @@ void BankAccount::withdraw(float amount)
     {
         balance -= amount;
     }
-    // std::this_thread::sleep_for(std::chrono::milliseconds(20000)); // sleep after the changes in balance as the first one :)
 }
 
 float BankAccount::getBalance() const

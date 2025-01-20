@@ -1,6 +1,8 @@
 #include <iostream>
 #include <random>
 #include <thread>
+#include <chrono>
+#include <mutex>
 #include "../include/RandomHandler.hpp"
 
 std::random_device rd;
@@ -27,7 +29,7 @@ int getRandomAccount()
     return getRandomNumber(1000, 1005);
 }
 
-void clientSimulation(Bank &bank, int clientId)
+void clientSimulation(Bank &bank, int clientId, std::mutex &bankMutex)
 {
     int accountNumber = getRandomAccount();
     int amount = getRandomAmount();
@@ -40,19 +42,44 @@ void clientSimulation(Bank &bank, int clientId)
 
     while (true)
     {
-        while (true)
+        std::thread depositThread([&]()
+                                  {
+            while (true)
+            {
+                {
+                    std::lock_guard<std::mutex> lock(bankMutex);
+                    account->deposit(amount);
+                    std::cout << "Client " << clientId << " deposited " << amount << " to account " << accountNumber << std::endl;
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(6000));
+            } });
+
+        std::thread withdrawThread([&]()
+                                   {
+            while (true)
+            {
+                {
+                    std::lock_guard<std::mutex> lock(bankMutex);
+                    account->withdraw(amount);
+                    std::cout << "Client " << clientId << " withdrew " << amount << " from account " << accountNumber << std::endl;
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+            } });
+        std::thread showBalanceThread([&]()
+                                      {
+            while (true)
+            {
+                {
+                    std::lock_guard<std::mutex> lock(bankMutex);
+                    std::cout << "Client " << clientId << " checked balance of account " << accountNumber << ": " << account->getBalance() << std::endl;
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(22000));
+            } });
+
         {
-            account->deposit(amount);
-            std::cout << "Client " << clientId << " deposited " << amount << " to account " << accountNumber << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(10000));
-        }
-        while (true)
-        {
-            account->withdraw(amount);
-            std::cout << "Client " << clientId << " withdrew " << amount << " from account " << accountNumber << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(20000));
         }
 
-        std::cout << account->getBalance() << std::endl;
+        depositThread.join();
+        withdrawThread.join();
     }
 }

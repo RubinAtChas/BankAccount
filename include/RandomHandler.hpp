@@ -11,6 +11,6 @@ int getRandomNumber(int min, int max);
 int getRandomClient();
 int getRandomAmount();
 int getRandomAccount();
-void clientSimulation(Bank &bank, int clientId);
+void clientSimulation(Bank &bank, int clientId, std::mutex &bankMutex);
 
 #endif
