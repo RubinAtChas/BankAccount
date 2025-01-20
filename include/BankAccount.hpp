@@ -8,16 +8,16 @@ class BankAccount
 {
 public:
     BankAccount();
-    BankAccount(int accountNumber, double balance);
+    BankAccount(int accountNumber, float balance);
 
-    void deposit(double amount);
-    void withdraw(double amount);
-    double getBalance() const;
+    void deposit(float amount);
+    void withdraw(float amount);
+    float getBalance() const;
     int getAccountNumber() const;
     mutable std::mutex accountMutex;
 
 private:
-    double balance;
+    float balance;
     int accountNumber;
 };
 
