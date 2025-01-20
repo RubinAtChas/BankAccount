@@ -29,3 +29,8 @@ float BankAccount::getBalance() const
 
     return balance;
 }
+void BankAccount::printBalance(const std::string &clientName) const
+{
+    std::lock_guard<std::mutex> lock(accountMutex); // Mutex that protects the balance
+    std::cout << "Client: " << clientName << ", Balance: " << balance << std::endl;
+}
