@@ -7,27 +7,27 @@ BankAccount::BankAccount(int accountNumber, float balance) : accountNumber(accou
 
 void BankAccount::deposit(float amount)
 {        
-    std::lock_guard<std::mutex> lock(accountMutex);
+    std::lock_guard<std::mutex> lock(accountMutex); //Mutex that protects the balance
     if (amount > 0)
     {
         balance += amount;
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //test 
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //sleep after the changes in balance, after if statment to avoid race conditions if another methods dont have lock_guard 
 }
 
 void BankAccount::withdraw(float amount)
 {
-    std::lock_guard<std::mutex> lock(accountMutex);
+    std::lock_guard<std::mutex> lock(accountMutex); //Mutex that protects the balance
     if (amount > 0 && amount <= balance)
     {
         balance -= amount;
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //test
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //sleep after the changes in balance as the first one :)
 }
 
 float BankAccount::getBalance() const
 {
-    std::lock_guard<std::mutex> lock(accountMutex);
+    std::lock_guard<std::mutex> lock(accountMutex); //Mutex that protects the balance
 
     return balance;
 }
