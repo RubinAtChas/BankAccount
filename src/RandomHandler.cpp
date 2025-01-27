@@ -91,25 +91,9 @@ void clientSimulation(Bank &bank, int clientId, std::mutex &bankMutex)
         std::unique_lock<std::mutex> lock(mtx);
         cv.wait_for(lock, std::chrono::seconds(1), []
                     { return !running; });
-
         if (generateReport)
         {
-            int totalDeposits = 0;
-            int totalWithdrawals = 0;
-            float finalBalance = 0.0;
-
-            for (const auto &pair : bank.getAccounts())
-            {
-                finalBalance += pair.second->getBalance();
-                totalDeposits += pair.second->getTotalDeposits();
-                totalWithdrawals += pair.second->getTotalWithdrawals();
-            }
-
-            std::cout << "\nReport:\n";
-            std::cout << "Total Deposits: " << totalDeposits << "\n";
-            std::cout << "Total Withdrawals: " << totalWithdrawals << "\n";
-            std::cout << "Final Balance: " << finalBalance << "\n";
-
+            bank.displayAllAccounts();
             generateReport = false;
         }
     }

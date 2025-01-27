@@ -39,9 +39,25 @@ std::map<int, std::shared_ptr<BankAccount>> Bank::getAccounts() const
 
 void Bank::displayAllAccounts() const
 {
-    for (const auto &pair : accounts)
+    int totalDeposits = 0;
+    int totalWithdrawals = 0;
+    float finalBalance = 0.0;
+
+    for (const auto &pair : getAccounts())
     {
-        std::cout << "Account Number: " << pair.first
-                  << ", Balance: " << pair.second->getBalance() << std::endl;
+        finalBalance += pair.second->getBalance();
+        totalDeposits += pair.second->getTotalDeposits();
+        totalWithdrawals += pair.second->getTotalWithdrawals();
     }
+
+    std::cout << "\nFinal account balances:\n";
+    for (const auto &pair : getAccounts())
+    {
+        std::cout << "Account " << pair.first << ": " << pair.second->getBalance() << "\n";
+    }
+
+    std::cout << "\nReport:\n";
+    std::cout << "Total Deposits: " << totalDeposits << "\n";
+    std::cout << "Total Withdrawals: " << totalWithdrawals << "\n";
+    std::cout << "Final Balance: " << finalBalance << "\n";
 }
