@@ -6,7 +6,7 @@
 #include <mutex>
 #include "include/Bank.hpp"
 #include "include/RandomHandler.hpp"
-#include "include/conditionVariable.hpp"
+
 int main()
 {
     Bank bank;
@@ -30,6 +30,7 @@ int main()
 
     std::cout << "\nFinal account balances:\n";
     bank.displayAllAccounts();
-
+    std::thread waitForEnterThread(waitForEnter);
+    waitForEnterThread.join();
     return 0;
 }
