@@ -14,13 +14,12 @@ public:
     void withdraw(float amount);
     float getBalance() const;
     int getAccountNumber() const;
+    void printBalance(const std::string &clientName) const;
     mutable std::mutex accountMutex;
-    
 
 private:
     float balance;
     int accountNumber;
-
 };
 
 #endif // BANKACCOUNT_HPP

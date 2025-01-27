@@ -1,56 +1,36 @@
-#include <iostream>
-#include <random>
+#ifndef RANDOMHANDLER_HPP
+#define RANDOMHANDLER_HPP
+
 #include "../include/Bank.hpp"
+#include <iostream>
+#include <memory>
+#include <mutex>
+#include <random>
+#include <thread>
+#include <chrono>
+#include <atomic>
+#include <condition_variable>
 
-std::random_device rd;
-std::mt19937 gen(rd());
+extern std::condition_variable cv;
+extern std::atomic<bool> running;
+extern std::mutex mtx;
+extern std::random_device rd;
+extern std::mt19937 gen;
 
-int getRandomNumber(int min, int max)
+struct RandomTransactionData
 {
-    std::uniform_real_distribution<> dis(min, max);
-    return dis(gen);
-}
+    BankAccount &account;
+    int clientId;
+    int accountNumber;
+    int amount;
+    std::mutex &bankMutex;
+};
 
-int getRandomClient()
-{
-    return getRandomNumber(1.0, 10.0);
-}
+int getRandomNumber(int min, int max);
+int getRandomClient();
+int getRandomAmount();
+int getRandomAccount();
+void clientSimulation(Bank &bank, int clientId, std::mutex &bankMutex);
+void waitForEnter();
 
-int getRandomAmount()
-{
-    return getRandomNumber(1.0, 100000.0);
-}
-
-int getRandomAccount()
-{
-    return getRandomNumber(1.0, 5.0);
-}
-
-void clientSimulation(Bank &bank, int clientId)
-{
-    int accountNumber = getRandomClient();
-    int amount = getRandomAmount();
-    int account = getRandomAccount();
-
-    std::shared_ptr<BankAccount> clientAccount = bank.getAccount(accountNumber);
-
-    if (clientAccount)
-    {
-        std::lock_guard<std::mutex> lock(clientAccount->accountMutex);
-
-        if (account == 1)
-        {
-            clientAccount->deposit(amount);
-            std::cout << "Client " << clientId << " deposited $" << amount << " into account " << accountNumber << std::endl;
-        }
-        else
-        {
-            clientAccount->withdraw(amount);
-            std::cout << "Client " << clientId << " withdrew $" << amount << " from account " << accountNumber << std::endl;
-        }
-    }
-    else
-    {
-        std::cout << "Client " << clientId << " could not access account " << accountNumber << std::endl;
-    }
-}
+#endif
