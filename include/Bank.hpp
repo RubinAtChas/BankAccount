@@ -16,6 +16,8 @@ public:
     std::shared_ptr<BankAccount> getAccount(int accountNumber) const;
 
     void displayAllAccounts() const;
+
+    std::map<int, std::shared_ptr<BankAccount>> getAccounts() const;
 };
 
 #endif

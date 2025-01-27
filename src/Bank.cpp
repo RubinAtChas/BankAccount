@@ -1,6 +1,10 @@
 #include "../include/Bank.hpp"
 #include <iostream>
 
+Bank::Bank()
+{
+}
+
 void Bank::addAccount(int accountNumber, int initialBalance)
 {
     if (accounts.find(accountNumber) == accounts.end())
@@ -26,6 +30,11 @@ std::shared_ptr<BankAccount> Bank::getAccount(int accountNumber) const
         std::cout << "Account " << accountNumber << " not found." << std::endl;
         return nullptr;
     }
+}
+
+std::map<int, std::shared_ptr<BankAccount>> Bank::getAccounts() const
+{
+    return accounts;
 }
 
 void Bank::displayAllAccounts() const

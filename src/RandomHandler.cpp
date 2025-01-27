@@ -10,6 +10,7 @@
 
 std::condition_variable cv;
 std::atomic<bool> running(true);
+std::atomic<bool> generateReport(false);
 std::mutex mtx;
 std::random_device rd;
 std::mt19937 gen(rd());
@@ -48,11 +49,10 @@ void depositRandom(RandomTransactionData data)
 
 void withdrawRandom(RandomTransactionData data)
 {
-
+    std::lock_guard<std::mutex> lock(data.bankMutex);
+    if (data.account.withdraw(data.amount))
     {
-        std::lock_guard<std::mutex> lock(data.bankMutex);
-        data.account.withdraw(data.amount);
-        std::cout << "Client " << data.clientId << " withdrew " << data.amount << " from account " << data.accountNumber << std::endl;
+        data.account.addToTotalWithdrawals(data.amount);
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 }
@@ -90,7 +90,28 @@ void clientSimulation(Bank &bank, int clientId, std::mutex &bankMutex)
         showBalanceThread.join();
         std::unique_lock<std::mutex> lock(mtx);
         cv.wait_for(lock, std::chrono::seconds(1), []
-                    { return !running; }); // HÄR VA VI SENAST, KOLLA HÄR MISSA MIG INTE
+                    { return !running; });
+
+        if (generateReport)
+        {
+            int totalDeposits = 0;
+            int totalWithdrawals = 0;
+            float finalBalance = 0.0;
+
+            for (const auto &pair : bank.getAccounts())
+            {
+                finalBalance += pair.second->getBalance();
+                totalDeposits += pair.second->getTotalDeposits();
+                totalWithdrawals += pair.second->getTotalWithdrawals();
+            }
+
+            std::cout << "\nReport:\n";
+            std::cout << "Total Deposits: " << totalDeposits << "\n";
+            std::cout << "Total Withdrawals: " << totalWithdrawals << "\n";
+            std::cout << "Final Balance: " << finalBalance << "\n";
+
+            generateReport = false;
+        }
     }
 }
 
@@ -99,6 +120,7 @@ void waitForEnter()
     std::cin.get();
     {
         std::lock_guard<std::mutex> lock(mtx);
+        generateReport = true;
         running = false;
     }
     cv.notify_all();
