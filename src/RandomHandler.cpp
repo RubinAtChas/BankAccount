@@ -10,6 +10,7 @@
 
 std::condition_variable cv;
 std::atomic<bool> running(true);
+std::atomic<bool> generateReport(false);
 std::mutex mtx;
 std::random_device rd;
 std::mt19937 gen(rd());
@@ -106,6 +107,7 @@ void waitForEnter()
     std::cin.get();
     {
         std::lock_guard<std::mutex> lock(mtx);
+        generateReport = true;
         running = false;
     }
     cv.notify_all();
