@@ -50,3 +50,8 @@ int BankAccount::getTotalDeposits() const
 {
     return totalDeposits;
 }
+
+void BankAccount::addToTotalWithdrawals(int amount)
+{
+    totalWithdrawals += amount;
+}

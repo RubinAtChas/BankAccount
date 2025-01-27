@@ -54,6 +54,9 @@ void Bank::displayAllAccounts() const
     for (const auto &pair : getAccounts())
     {
         std::cout << "Account " << pair.first << ": " << pair.second->getBalance() << "\n";
+        std::cout << "Total Deposits: " << pair.second->getTotalDeposits() << "\n";
+        std::cout << "Total Withdrawals: " << pair.second->getTotalWithdrawals() << "\n";
+        std::cout << "\n";
     }
 
     std::cout << "\nReport:\n";
