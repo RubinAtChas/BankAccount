@@ -17,11 +17,15 @@ int main()
         bank.addAccount(1000 + i, 1000);
     }
 
+    std::thread waitForEnterThread(waitForEnter);
+
     std::vector<std::thread> clients;
     for (int i = 0; i < 10; ++i)
     {
         clients.emplace_back(clientSimulation, std::ref(bank), i + 1, std::ref(bankMutex));
     }
+
+    waitForEnterThread.join();
 
     for (auto &client : clients)
     {
@@ -30,7 +34,6 @@ int main()
 
     std::cout << "\nFinal account balances:\n";
     bank.displayAllAccounts();
-    std::thread waitForEnterThread(waitForEnter);
-    waitForEnterThread.join();
+
     return 0;
 }
