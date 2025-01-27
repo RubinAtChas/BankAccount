@@ -17,8 +17,6 @@ int main()
         bank.addAccount(1000 + i, 1000);
     }
 
-    std::thread waitForEnterThread(waitForEnter);
-
     std::vector<std::thread> clients;
     for (int i = 0; i < 10; ++i)
     {
@@ -29,10 +27,10 @@ int main()
     {
         client.join();
     }
-    waitForEnterThread.join();
 
     std::cout << "\nFinal account balances:\n";
     bank.displayAllAccounts();
-
+    std::thread waitForEnterThread(waitForEnter);
+    waitForEnterThread.join();
     return 0;
 }
