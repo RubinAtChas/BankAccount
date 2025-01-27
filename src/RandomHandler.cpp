@@ -3,9 +3,9 @@
 #include <thread>
 #include <chrono>
 #include <mutex>
-#include <iostream>
 #include <atomic>
 #include <condition_variable>
+#include <unordered_map>
 #include "../include/RandomHandler.hpp"
 
 std::condition_variable cv;
@@ -13,6 +13,47 @@ std::atomic<bool> running(true);
 std::mutex mtx;
 std::random_device rd;
 std::mt19937 gen(rd());
+
+class Logger
+{
+    public:
+        void logDeposit(int accountNumber, int amount)
+        {
+            std::lock_guard<std::mutex> lock(logMutex);
+            logs[accountNumber].totalDeposits += amount;
+            logs[accountNumber].balance += amount;
+        }
+
+        void logWithdraw(int accountNumber, int amount)
+        {
+            std::lock_guard<std::mutex> lock(logMutex);
+            logs[accountNumber].totalWithdraws += amount;
+            logs[accountNumber].balance -= amount;
+        }
+
+        void printLog(int accountNumber)
+        {
+            std::lock_guard<std::mutex> lock(logMutex);
+            const auto& log = logs[accountNumber];
+            std::cout << "\n\n***Account" << accountNumber << "*** log:" << std::endl;
+            std::cout << "***Total deposits: " << log.totalDeposits << std::endl;
+            std::cout << "***Total withdraws: " << log.totalWithdraws << std::endl;
+            std::cout << "***Balance: " << log.balance << "\n" << std::endl;
+        }
+
+    private:
+        struct AccountLog
+        {
+            int totalDeposits = 0;
+            int totalWithdraws = 0;
+            int balance = 0;
+        };
+
+        std::unordered_map<int, AccountLog> logs;
+        std::mutex logMutex;
+};
+
+Logger logger;
 
 int getRandomNumber(int min, int max)
 {
@@ -41,6 +82,7 @@ void depositRandom(RandomTransactionData data)
     {
         std::lock_guard<std::mutex> lock(data.bankMutex);
         data.account.deposit(data.amount);
+        logger.logDeposit(data.accountNumber, data.amount);
         std::cout << "Client " << data.clientId << " deposited " << data.amount << " to account " << data.accountNumber << std::endl;
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
@@ -52,6 +94,7 @@ void withdrawRandom(RandomTransactionData data)
     {
         std::lock_guard<std::mutex> lock(data.bankMutex);
         data.account.withdraw(data.amount);
+        logger.logWithdraw(data.accountNumber, data.amount);
         std::cout << "Client " << data.clientId << " withdrew " << data.amount << " from account " << data.accountNumber << std::endl;
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(3000));
@@ -63,6 +106,7 @@ void showBalance(RandomTransactionData data)
     {
         std::lock_guard<std::mutex> lock(data.bankMutex);
         std::cout << "Client " << data.clientId << " checked balance of account " << data.accountNumber << ": " << data.account.getBalance() << std::endl;
+        logger.printLog(data.accountNumber);
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(2200));
 }
