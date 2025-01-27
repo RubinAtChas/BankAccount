@@ -37,41 +37,53 @@ int getRandomAccount()
 
 void depositRandom(RandomTransactionData data)
 {
-
+    while (running)
     {
-        std::lock_guard<std::mutex> lock(data.bankMutex);
-        data.account.deposit(data.amount);
-        std::cout << "Client " << data.clientId << " deposited " << data.amount << " to account " << data.accountNumber << std::endl;
+        {
+            std::lock_guard<std::mutex> lock(data.bankMutex);
+            data.account.deposit(data.amount);
+            std::cout << "Client " << data.clientId << " deposited " << data.amount << " to account " << data.accountNumber << std::endl;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 }
 
 void withdrawRandom(RandomTransactionData data)
 {
-
+    while (running)
     {
-        std::lock_guard<std::mutex> lock(data.bankMutex);
-        data.account.withdraw(data.amount);
-        std::cout << "Client " << data.clientId << " withdrew " << data.amount << " from account " << data.accountNumber << std::endl;
+        {
+            std::lock_guard<std::mutex> lock(data.bankMutex);
+            data.account.withdraw(data.amount);
+            std::cout << "Client " << data.clientId << " withdrew " << data.amount << " from account " << data.accountNumber << std::endl;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(3000));
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 }
 
 void showBalance(RandomTransactionData data)
 {
-
+    while (running)
     {
-        std::lock_guard<std::mutex> lock(data.bankMutex);
-        std::cout << "Client " << data.clientId << " checked balance of account " << data.accountNumber << ": " << data.account.getBalance() << std::endl;
+        {
+            std::lock_guard<std::mutex> lock(data.bankMutex);
+            std::cout << "Client " << data.clientId << " checked balance of account " << data.accountNumber << ": " << data.account.getBalance() << std::endl;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(2200));
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(2200));
 }
 
 void clientSimulation(Bank &bank, int clientId, std::mutex &bankMutex)
 {
     int accountNumber = getRandomAccount();
     int amount = getRandomAmount();
-    std::shared_ptr<BankAccount> account = bank.getAccount(accountNumber);
+    std::shared_ptr<BankAccount> account;
+
+    {
+        std::lock_guard<std::mutex> lock(bankMutex);
+        account = bank.getAccount(accountNumber);
+    }
+
     if (account == nullptr)
     {
         std::cout << "Account not found" << std::endl;
@@ -79,19 +91,14 @@ void clientSimulation(Bank &bank, int clientId, std::mutex &bankMutex)
     }
 
     RandomTransactionData data = {*account, clientId, accountNumber, amount, bankMutex};
-    while (running)
-    {
-        std::thread depositThread(depositRandom, data);
-        std::thread withdrawThread(withdrawRandom, data);
-        std::thread showBalanceThread(showBalance, data);
 
-        depositThread.join();
-        withdrawThread.join();
-        showBalanceThread.join();
-        std::unique_lock<std::mutex> lock(mtx);
-        cv.wait_for(lock, std::chrono::seconds(1), []
-                    { return !running; }); // HÄR VA VI SENAST, KOLLA HÄR MISSA MIG INTE
-    }
+    std::thread depositThread(depositRandom, data);
+    std::thread withdrawThread(withdrawRandom, data);
+    std::thread showBalanceThread(showBalance, data);
+
+    depositThread.join();
+    withdrawThread.join();
+    showBalanceThread.join();
 }
 
 void waitForEnter()

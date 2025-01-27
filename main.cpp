@@ -25,12 +25,11 @@ int main()
         clients.emplace_back(clientSimulation, std::ref(bank), i + 1, std::ref(bankMutex));
     }
 
-    waitForEnterThread.join();
-
     for (auto &client : clients)
     {
         client.join();
     }
+    waitForEnterThread.join();
 
     std::cout << "\nFinal account balances:\n";
     bank.displayAllAccounts();
