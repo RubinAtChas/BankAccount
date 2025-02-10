@@ -13,11 +13,10 @@ public:
     bool deposit(int amount);
     bool withdraw(int amount);
     float getBalance() const;
-    int getAccountNumber() const;
     void printBalance(const std::string &clientName) const;
     int getTotalWithdrawals() const;
-    void addToTotalWithdrawals(int amount);
     int getTotalDeposits() const;
+
     mutable std::mutex accountMutex;
 
 private:

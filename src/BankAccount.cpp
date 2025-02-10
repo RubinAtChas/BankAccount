@@ -7,9 +7,9 @@ BankAccount::BankAccount(int accountNumber, float balance) : accountNumber(accou
 
 bool BankAccount::deposit(int amount)
 {
+    std::lock_guard<std::mutex> lock(accountMutex); // Mutex that protects the balance
     totalDeposits += amount;
 
-    std::lock_guard<std::mutex> lock(accountMutex); // Mutex that protects the balance
     if (amount > 0)
     {
         balance += amount;
@@ -21,6 +21,8 @@ bool BankAccount::deposit(int amount)
 bool BankAccount::withdraw(int amount)
 {
     std::lock_guard<std::mutex> lock(accountMutex); // Mutex that protects the balance
+    totalWithdrawals += amount;
+
     if (balance >= amount)
     {
         balance -= amount;
@@ -49,8 +51,4 @@ int BankAccount::getTotalWithdrawals() const
 int BankAccount::getTotalDeposits() const
 {
     return totalDeposits;
-}
-
-void BankAccount::addToTotalWithdrawals(int amount) {
-    totalWithdrawals += amount;
 }

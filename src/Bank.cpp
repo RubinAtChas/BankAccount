@@ -7,6 +7,8 @@ Bank::Bank()
 
 void Bank::addAccount(int accountNumber, int initialBalance)
 {
+    std::lock_guard<std::mutex> lock(bankMutex); // Lock the mutex to ensure thread safety
+
     if (accounts.find(accountNumber) == accounts.end())
     {
         accounts[accountNumber] = std::make_shared<BankAccount>(accountNumber, initialBalance);
@@ -20,6 +22,8 @@ void Bank::addAccount(int accountNumber, int initialBalance)
 
 std::shared_ptr<BankAccount> Bank::getAccount(int accountNumber) const
 {
+    std::lock_guard<std::mutex> lock(bankMutex); // Lock the mutex to ensure thread safety
+
     auto it = accounts.find(accountNumber);
     if (it != accounts.end())
     {
@@ -34,6 +38,7 @@ std::shared_ptr<BankAccount> Bank::getAccount(int accountNumber) const
 
 std::map<int, std::shared_ptr<BankAccount>> Bank::getAccounts() const
 {
+    std::lock_guard<std::mutex> lock(bankMutex); // Lock the mutex to ensure thread safety
     return accounts;
 }
 
@@ -51,6 +56,7 @@ void Bank::displayAllAccounts() const
     }
 
     std::cout << "\nFinal account balances:\n";
+
     for (const auto &pair : getAccounts())
     {
         std::cout << "Account " << pair.first << ": " << pair.second->getBalance() << "\n";
@@ -64,4 +70,3 @@ void Bank::displayAllAccounts() const
     std::cout << "Total Withdrawals: " << totalWithdrawals << "\n";
     std::cout << "Final Balance: " << finalBalance << "\n";
 }
-
